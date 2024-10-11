@@ -1,0 +1,20 @@
+GET http://localhost:8000/c6g1/api/v1/staff
+###
+POST http://localhost:8000/c6g1/api/v1/staff
+Content-Type: application/json
+
+{
+  "name": "John Doe",
+  "age" : 24
+}
+###
+DELETE http://localhost:8000/c6g1/api/v1/staff/24
+Content-Type: application/json
+###
+PUT http://localhost:8000/c6g1/api/v1/staff/21
+Content-Type: application/json
+
+{
+  "name": "Viet Dung Tran",
+  "age" : 24
+}

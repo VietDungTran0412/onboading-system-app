@@ -1,0 +1,13 @@
+version: '3.8'
+services:
+  mysql:
+    image: mysql:8.2.0
+    ports:
+      - "3306:3306"
+    environment:
+      - MYSQL_DATABASE=c6g1
+      - MYSQL_ROOT_PASSWORD=root@password
+      - MYSQL_USER=dev
+      - MYSQL_PASSWORD=devpassword
+    restart: always
+
