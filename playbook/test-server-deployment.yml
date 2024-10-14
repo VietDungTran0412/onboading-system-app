@@ -1,9 +1,11 @@
 ---
-- name: Deploy Spring Boot application to EC2
+- name: Deploy Spring Boot application from S3 to EC2
   hosts: all
   become: yes
   vars:
     app_name: spring-boot-app
+    s3_bucket: swin-c6g1-report-bucket
+    s3_object_key: build/app-v1.0.0.jar
     jar_file: app.jar
     app_install_dir: /opt/onboarding-system
     app_service_name: onboarding-system
@@ -23,11 +25,9 @@
         owner: root
         group: root
 
-    - name: Copy Spring Boot JAR to remote server
-      ansible.builtin.copy:
-        src: "{{ jar_file }}"
-        dest: "{{ app_install_dir }}/{{ jar_file }}"
-        mode: '0755'
+    - name: Download JAR from S3 bucket
+      ansible.builtin.command:
+        cmd: "aws s3 cp s3://{{ s3_bucket }}/{{ s3_object_key }} {{ app_install_dir }}/{{ jar_file }}"
 
     - name: Create systemd service file for Spring Boot application
       ansible.builtin.copy:
