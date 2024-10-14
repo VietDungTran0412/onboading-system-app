@@ -36,10 +36,17 @@ pipeline {
                  sh ""
            }
          }
+        stage ('Deploy') {
+            steps{
+                sshagent(credentials : ['application-server-ssh-key']) {
+                    sh 'ssh -o StrictHostKeyChecking=no ec2-user@10.0.2.89 uptime'
+                }
+            }
+        }
         stage('Upload Build Artefacts') {
             steps {
                 echo '*** Upload Build Artefacts ***'
-                sh "aws s3 cp target/c6g1-0.0.1-SNAPSHOT.war  s3://swin-c6g1-report-bucket/build/app-${BUILD_VERSION}.war"
+                sh "aws s3 cp target/c6g1-0.0.1-SNAPSHOT.war  s3://swin-c6g1-report-bucket/build/app-${BUILD_VERSION}.jar"
                 sh ""
             }
         }
