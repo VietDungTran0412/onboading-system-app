@@ -25,7 +25,7 @@ pipeline {
                 script {
                     echo '*** Upload Vulnerability Report ***'
                     def timestamp = sh(script: 'date +%Y%m%d-%H%M%S', returnStdout: true).trim()
-                    sh 'aws s3 cp target/dependency-check-report.html s3://swin-c6g1-report-bucket/dependency-reports/dependency-check-report-${timestamp}.html --acl public-read'
+                    sh 'aws s3 cp target/dependency-check-report.html s3://swin-c6g1-report-bucket/dependency-reports/dependency-check-report-${timestamp}.html'
                 }
             }
         }
@@ -39,10 +39,15 @@ pipeline {
         stage('Upload Build Artefacts') {
             steps {
                 echo '*** Upload Build Artefacts ***'
-                sh "aws s3 cp target/c6g1-0.0.1-SNAPSHOT.war  s3://swin-c6g1-report-bucket/build/app-${BUILD_VERSION}.war --acl public-read"
+                sh "aws s3 cp target/c6g1-0.0.1-SNAPSHOT.war  s3://swin-c6g1-report-bucket/build/app-${BUILD_VERSION}.war"
                 sh ""
             }
         }
     }
-
+    post {
+        always {
+            echo '*** Cleaning Jenkins Workspace ***'
+            cleanWs() // This will clean the workspace in Jenkins
+        }
+    }
 }
