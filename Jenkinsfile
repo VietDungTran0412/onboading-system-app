@@ -22,9 +22,11 @@ pipeline {
         }
         stage('Upload Vulnerability Report') {
             steps {
-                echo '*** Upload Vulnerability Report ***'
-                def timestamp = sh(script: 'date +%Y%m%d-%H%M%S', returnStdout: true).trim()
-                sh 'aws s3 cp target/dependency-check-report.html s3://swin-c6g1-report-bucket/dependency-reports/dependency-check-report-${timestamp}.html --acl public-read'
+                script {
+                    echo '*** Upload Vulnerability Report ***'
+                    def timestamp = sh(script: 'date +%Y%m%d-%H%M%S', returnStdout: true).trim()
+                    sh 'aws s3 cp target/dependency-check-report.html s3://swin-c6g1-report-bucket/dependency-reports/dependency-check-report-${timestamp}.html --acl public-read'
+                }
             }
         }
          stage('Build') {
