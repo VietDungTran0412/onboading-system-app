@@ -1,0 +1,58 @@
+---
+- name: Deploy Spring Boot application to EC2
+  hosts: all
+  become: yes
+  vars:
+    app_name: spring-boot-app
+    jar_file: app.jar
+    app_install_dir: /opt/onboarding-system
+    app_service_name: onboarding-system
+    java_package: java-17-amazon-corretto
+
+  tasks:
+    - name: Install Java 17 (Amazon Corretto)
+      ansible.builtin.yum:
+        name: "{{ java_package }}"
+        state: present
+
+    - name: Create application directory
+      ansible.builtin.file:
+        path: "{{ app_install_dir }}"
+        state: directory
+        mode: '0755'
+        owner: root
+        group: root
+
+    - name: Copy Spring Boot JAR to remote server
+      ansible.builtin.copy:
+        src: "{{ jar_file }}"
+        dest: "{{ app_install_dir }}/{{ jar_file }}"
+        mode: '0755'
+
+    - name: Create systemd service file for Spring Boot application
+      ansible.builtin.copy:
+        dest: /etc/systemd/system/{{ app_service_name }}.service
+        content: |
+          [Unit]
+          Description=Spring Boot Application - {{ app_name }}
+          After=network.target
+          
+          [Service]
+          User=root
+          ExecStart=/usr/bin/java -jar {{ app_install_dir }}/{{ jar_file }}
+          SuccessExitStatus=143
+          Restart=on-failure
+          RestartSec=5
+          
+          [Install]
+          WantedBy=multi-user.target
+
+    - name: Reload systemd to apply changes
+      ansible.builtin.systemd:
+        daemon_reload: yes
+
+    - name: Start Spring Boot service
+      ansible.builtin.systemd:
+        name: "{{ app_service_name }}"
+        state: started
+        enabled: yes
