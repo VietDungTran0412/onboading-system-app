@@ -5,13 +5,16 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import swin.swe4006.c6g1.dto.StaffDto;
 import swin.swe4006.c6g1.entity.Staff;
 import swin.swe4006.c6g1.exception.AppEntityNotFound;
+import swin.swe4006.c6g1.repository.StaffRepository;
 import swin.swe4006.c6g1.service.StaffService;
 
 import java.util.Arrays;
@@ -26,6 +29,9 @@ class StaffControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
+
+    @MockBean
+    private StaffRepository repository;
 
     @MockBean
     private StaffService staffService; // This mocks StaffService
@@ -59,7 +65,7 @@ class StaffControllerTest {
         StaffDto staffDto = new StaffDto();
         staffDto.setAge(30);
         staffDto.setName("John Doe");
-        Staff staff = new Staff(1L, "John Doe", 30);
+        Staff staff = new Staff(1L, "John Doe123123", 30);
 
         when(staffService.save(any(StaffDto.class))).thenReturn(staff);
 
@@ -68,7 +74,7 @@ class StaffControllerTest {
                         .content(objectMapper.writeValueAsString(staffDto)))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.message").value("Successfully create a new staff"))
-                .andExpect(jsonPath("$.data.name").value("John Doe"));
+                .andExpect(jsonPath("$.data.name").value("John Doe123123"));
     }
 
     @Test
