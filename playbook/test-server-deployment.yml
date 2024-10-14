@@ -39,6 +39,7 @@
           
           [Service]
           User=root
+          Environment=TARGET=dev
           ExecStart=/usr/bin/java -jar {{ app_install_dir }}/{{ jar_file }}
           SuccessExitStatus=143
           Restart=on-failure
