@@ -51,13 +51,19 @@ pipeline {
                 }
             }
         }
-         stage('Build') {
+         stage('Build with Maven') {
              steps {
                  echo '*** Build Phase ***'
                  sh "mvn clean install"
                  sh ""
            }
          }
+        stage('Upload Build Artefacts to S3') {
+            steps {
+                echo '*** Upload Build Artefacts ***'
+                sh "aws s3 cp target/c6g1-0.0.1-SNAPSHOT.war  s3://swin-c6g1-report-bucket/build/app-${BUILD_VERSION}.war"
+            }
+        }
         stage ('Pull Build File From S3 To Test Server') {
             steps{
                 sshagent(credentials : ['application-server-ssh-key']) {
