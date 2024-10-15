@@ -9,27 +9,27 @@ pipeline {
         BUILD_SNAPSHOT = 'c6g1-0.0.1-SNAPSHOT.jar '
     }
     stages {
-//        stage('Unit Testing') {
-//            steps {
-//                echo '*** Testing Phase ***'
-//                sh "mvn clean test"
-//            }
-//        }
-//        stage('Vulnerability Check') {
-//            steps {
-//                echo '*** Vulnerability Check Phase ***'
-//                sh "mvn org.owasp:dependency-check-maven:check"
-//            }
-//        }
-//        stage('Upload Vulnerability Report') {
-//            steps {
-//                script {
-//                    echo '*** Upload Vulnerability Report ***'
-//                    def timestamp = sh(script: 'date +%Y%m%d-%H%M%S', returnStdout: true).trim()
-//                    sh 'aws s3 cp target/dependency-check-report.html s3://swin-c6g1-report-bucket/dependency-reports/dependency-check-report-${timestamp}.html'
-//                }
-//            }
-//        }
+        stage('Unit Testing') {
+            steps {
+                echo '*** Testing Phase ***'
+                sh "mvn clean test"
+            }
+        }
+        stage('Vulnerability Check') {
+            steps {
+                echo '*** Vulnerability Check Phase ***'
+                sh "mvn org.owasp:dependency-check-maven:check"
+            }
+        }
+        stage('Upload Vulnerability Report') {
+            steps {
+                script {
+                    echo '*** Upload Vulnerability Report ***'
+                    def timestamp = sh(script: 'date +%Y%m%d-%H%M%S', returnStdout: true).trim()
+                    sh 'aws s3 cp target/dependency-check-report.html s3://swin-c6g1-report-bucket/dependency-reports/dependency-check-report-${timestamp}.html'
+                }
+            }
+        }
          stage('Build') {
              steps {
                  echo '*** Build Phase ***'
@@ -37,34 +37,19 @@ pipeline {
                  sh ""
            }
          }
-        stage ('Copy Build File To Test Server') {
+        stage ('Pull Build File From S3 To Test Server') {
             steps{
                 sshagent(credentials : ['application-server-ssh-key']) {
-                    echo '*** Copy Build File To Test Server ***'
-                    sh """
-                        ssh -o StrictHostKeyChecking=no ec2-user@10.0.2.253 "
-                        mkdir -p app &&
-                        exit
-                        "
-                        scp target/${BUILD_SNAPSHOT} ec2-user@10.0.2.253:/tmp/app.jar
-                        """
+                    echo "*** Pull And Deploy to Test Server ***"
+                    sh "/usr/bin/ansible-playbook playbook/test-server-deployment.yml -i playbook/test-hosts.ini"
                 }
             }
         }
-//        stage ('Pull Build File To Test Server') {
-//            steps{
-//                sshagent(credentials : ['application-server-ssh-key']) {
-//                    ansiblePlaybook installation: 'Ansible', inventory: 'playbook/test-hosts.ini', playbook: 'playbook/test-server-deployment.yml', vaultTmpPath: ''
-//                }
-//            }
-//        }
-//        stage('Upload Build Artefacts') {
-//            steps {
-//                echo '*** Upload Build Artefacts ***'
-//                sh "aws s3 cp target/c6g1-0.0.1-SNAPSHOT.jar  s3://swin-c6g1-report-bucket/build/app-${BUILD_VERSION}.jar"
-//                sh ""
-//            }
-//        }
+        stage('Integration Testing using Postman') {
+            steps {
+                echo '*** Integration Testing using Postman ***'
+            }
+        }
     }
     post {
         always {
