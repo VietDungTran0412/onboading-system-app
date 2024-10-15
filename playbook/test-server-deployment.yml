@@ -56,20 +56,14 @@
       ansible.builtin.systemd:
         daemon_reload: yes
 
-    - name: Check if Spring Boot service exists
+    - name: Start Spring Boot service
       ansible.builtin.systemd:
         name: "{{ app_service_name }}"
         state: started
-      register: service_status
-      ignore_errors: yes
+        enabled: yes
 
-    - name: Start or restart Spring Boot service
+    - name: Restart Spring Boot service if it exists
       ansible.builtin.systemd:
         name: "{{ app_service_name }}"
         state: restarted
-      when: download_result.changed or service_status is not defined
-
-    - name: Enable the Spring Boot service to start on boot
-      ansible.builtin.systemd:
-        name: "{{ app_service_name }}"
-        enabled: yes
+      when: service_status is defined and service_status.changed
