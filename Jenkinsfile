@@ -22,16 +22,17 @@ pipeline {
             steps {
                 script {
                     def sonarScanner = "${SCANNER_HOME}/bin/sonar-scanner"
-                    catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') { // Catch any failure and mark the stage as failed
-                        sh """
-                        ${sonarScanner} \
-                        -Dsonar.host.url=${SONARQUBE_SERVER} \
-                        -Dsonar.login=${SONAR_TOKEN} \
-                        -Dsonar.projectName=onboarding-system-app \
-                        -Dsonar.java.binaries=target/classes \
-                        -Dsonar.projectKey=onboarding-system-app \
-                        -X
-                        """
+                    sh """
+                    ${sonarScanner} \
+                    -Dsonar.host.url=${SONARQUBE_SERVER} \
+                    -Dsonar.login=${SONAR_TOKEN} \
+                    -Dsonar.projectName=onboarding-system-app \
+                    -Dsonar.java.binaries=target/classes \
+                    -Dsonar.projectKey=onboarding-system-app \
+                    -X
+                    """
+                    if (currentBuild.result == 'FAILURE') {
+                        error('SonarQube Analysis failed. Stopping the pipeline.')
                     }
                 }
             }
