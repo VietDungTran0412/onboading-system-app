@@ -7,12 +7,31 @@ pipeline {
     environment {
         BUILD_VERSION = 'v1.0.0'
         BUILD_SNAPSHOT = 'c6g1-0.0.1-SNAPSHOT.jar '
+        SCANNER_HOME = tool 'sonar-scanner'
+        SONARQUBE_SERVER = 'http://3.107.104.232:9000/' 
+        SONAR_TOKEN = credentials('jenkinssonar') 
     }
     stages {
         stage('Unit Testing') {
             steps {
                 echo '*** Testing Phase ***'
                 sh "mvn clean test"
+            }
+        }
+        stage('Sonarqube Analysis') {
+            steps {
+                script {
+                    def sonarScanner = "${SCANNER_HOME}/bin/sonar-scanner"
+                    sh """
+                    ${sonarScanner} \
+                    -Dsonar.host.url=${SONARQUBE_SERVER} \
+                    -Dsonar.login=${SONAR_TOKEN} \
+                    -Dsonar.projectName=onboarding-system-app \
+                    -Dsonar.java.binaries=target/classes \
+                    -Dsonar.projectKey=onboarding-system-app \
+                    -X
+                    """ 
+                }
             }
         }
         stage('Vulnerability Check') {
