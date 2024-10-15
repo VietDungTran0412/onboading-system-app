@@ -11,6 +11,7 @@ import swin.swe4006.c6g1.dto.ResponseRestDto;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 
+// Comment
 @RestController
 @RequestMapping("/health-check")
 public class HealthCheckController {
