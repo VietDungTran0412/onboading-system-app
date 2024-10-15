@@ -25,6 +25,10 @@
         owner: root
         group: root
 
+    - name: Empty the application directory
+      ansible.builtin.command:
+        cmd: "rm -rf {{ app_install_dir }}/*"
+
     - name: Download JAR from S3 bucket
       ansible.builtin.command:
         cmd: "aws s3 cp s3://{{ s3_bucket }}/{{ s3_object_key }} {{ app_install_dir }}/{{ jar_file }}"
