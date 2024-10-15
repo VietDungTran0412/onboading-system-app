@@ -61,7 +61,7 @@ pipeline {
         stage('Upload Build Artefacts to S3') {
             steps {
                 echo '*** Upload Build Artefacts ***'
-                sh "aws s3 cp target/c6g1-0.0.1-SNAPSHOT.war  s3://swin-c6g1-report-bucket/build/app-${BUILD_VERSION}.war"
+                sh "aws s3 cp target/c6g1-0.0.1-SNAPSHOT.jar  s3://swin-c6g1-report-bucket/build/app-${BUILD_VERSION}.jar"
             }
         }
         stage ('Pull Build File From S3 To Test Server') {
