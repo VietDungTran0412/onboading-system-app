@@ -37,21 +37,34 @@ pipeline {
                  sh ""
            }
          }
-        stage('Upload Build Artefacts') {
-            steps {
-                echo '*** Upload Build Artefacts ***'
-                sh "aws s3 cp target/c6g1-0.0.1-SNAPSHOT.jar  s3://swin-c6g1-report-bucket/build/app-${BUILD_VERSION}.jar"
-                sh ""
-            }
-        }
-        stage ('Pull Build File To Test Server') {
+        stage ('Copy Build File To Test Server') {
             steps{
                 sshagent(credentials : ['application-server-ssh-key']) {
-                    ansiblePlaybook installation: 'Ansible', inventory: 'playbook/test-hosts.ini', playbook: 'playbook/test-server-deployment.yml', vaultTmpPath: ''
+                    echo '*** Copy Build File To Test Server ***'
+                    sh """
+                        ssh -o StrictHostKeyChecking=no ec2-user@10.0.2.253 "
+                        mkdir -p app &&
+                        exit
+                        "
+                        scp target/${BUILD_SNAPSHOT} ec2-user@10.0.2.253:/tmp/app.jar
+                        """
                 }
             }
         }
-
+//        stage ('Pull Build File To Test Server') {
+//            steps{
+//                sshagent(credentials : ['application-server-ssh-key']) {
+//                    ansiblePlaybook installation: 'Ansible', inventory: 'playbook/test-hosts.ini', playbook: 'playbook/test-server-deployment.yml', vaultTmpPath: ''
+//                }
+//            }
+//        }
+//        stage('Upload Build Artefacts') {
+//            steps {
+//                echo '*** Upload Build Artefacts ***'
+//                sh "aws s3 cp target/c6g1-0.0.1-SNAPSHOT.jar  s3://swin-c6g1-report-bucket/build/app-${BUILD_VERSION}.jar"
+//                sh ""
+//            }
+//        }
     }
     post {
         always {
