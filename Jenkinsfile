@@ -9,7 +9,8 @@ pipeline {
         BUILD_SNAPSHOT = 'c6g1-0.0.1-SNAPSHOT.jar '
         SCANNER_HOME = tool 'sonar-scanner'
         SONARQUBE_SERVER = 'http://3.107.104.232:9000/' 
-        SONAR_TOKEN = credentials('jenkinssonar') 
+        SONAR_TOKEN = credentials('jenkinssonar')
+        ANSIBLE_PRIVATE_KEY = credentials('application-server-ssh-key')
     }
     stages {
 //        stage('Unit Testing') {
@@ -95,7 +96,7 @@ pipeline {
             steps{
                 sshagent(credentials : ['application-server-ssh-key']) {
                     echo "*** Pull And Deploy to Production Servers ***"
-                    sh "/usr/bin/ansible-playbook playbook/prod-server-deployment.yml -i playbook/prod-hosts.ini"
+                    sh "/usr/bin/ansible-playbook playbook/prod-server-deployment.yml -i playbook/prod-hosts.ini --private-key=$ANSIBLE_PRIVATE_KEY"
                 }
             }
         }
