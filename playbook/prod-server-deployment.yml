@@ -1,5 +1,5 @@
 ---
-- name: Deploy Spring Boot application from S3 to EC2
+- name: Deploy Spring Boot application from S3 to EC2 Prod
   hosts: all
   become: yes
   vars:
