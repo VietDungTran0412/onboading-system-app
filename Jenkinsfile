@@ -97,10 +97,10 @@ pipeline {
             steps{
                 sshagent(credentials : ['application-server-ssh-key']) {
                     echo "*** Pull And Deploy to Production Servers ***"
-                    sh "ssh -o StrictHostKeyChecking=no ec2-user@10.0.1.227"
-                    sh "ssh -o StrictHostKeyChecking=no ec2-user@10.0.2.72"
+                    sh "ssh -o StrictHostKeyChecking=no ec2-user@10.0.4.201"
+                    sh "ssh -o StrictHostKeyChecking=no ec2-user@10.0.3.83"
                     sh "ansible-galaxy collection install -r playbook/requirements.yml"
-                    sh "/usr/bin/ansible-playbook playbook/prod-server-deployment.yml -i playbook/prod-hosts.ini"
+                    sh "/usr/bin/ansible-playbook playbook/prod-server-deployment.yml -i playbook/prod-hosts.ini -u ec2-user"
                 }
             }
         }
