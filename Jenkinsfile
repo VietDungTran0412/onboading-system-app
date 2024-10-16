@@ -95,7 +95,9 @@ pipeline {
             steps{
                 sshagent(credentials : ['application-server-ssh-key']) {
                     echo "*** Pull And Deploy to Production Servers ***"
-                    sh "/usr/bin/ansible-playbook playbook/prod-server-deployment.yml -i playbook/prod-hosts.ini"
+                    sh """
+                        ssh -o StrictHostKeyChecking=no ec2-user@10.0.1.227 "mkdir -p app"
+                        """
                 }
             }
         }
