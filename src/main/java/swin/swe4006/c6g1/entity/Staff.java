@@ -15,6 +15,8 @@ public class Staff {
     private String name;
     @Column(name = "age", nullable = false)
     private Integer age;
+    @Column(name = "address")
+    private String address;
     public Staff() {}
     public Staff(Long id, String name, Integer age) {
         this.id = id;

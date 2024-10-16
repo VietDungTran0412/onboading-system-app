@@ -20,12 +20,17 @@ public class StaffServiceImpl extends BaseServiceImpl<Staff, Long, StaffReposito
     protected StaffServiceImpl(StaffRepository repository) {
         super(repository);
     }
-    @Override
-    @Transactional(rollbackFor = Exception.class)
-    public Staff save(StaffDto dto) {
+    private Staff mapStaff( StaffDto dto) {
         Staff staff = new Staff();
         staff.setAge(dto.getAge());
         staff.setName(dto.getName());
+        staff.setAddress(dto.getAddress());
+        return staff;
+    }
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public Staff save(StaffDto dto) {
+        Staff staff = mapStaff(dto);
         log.info("Created new staff -- StaffServiceImpl");
         return save(staff);
     }
@@ -49,9 +54,10 @@ public class StaffServiceImpl extends BaseServiceImpl<Staff, Long, StaffReposito
             throw new AppEntityNotFound("Staff is not found with id: " + id);
         }
         log.info("Update staff with id: {}", id);
-        Staff deleteStaff = staffWrapper.get();
-        deleteStaff.setName(dto.getName());
-        deleteStaff.setAge(dto.getAge());
-        return save(deleteStaff);
+        Staff updateStaff = staffWrapper.get();
+        updateStaff.setName(dto.getName());
+        updateStaff.setAge(dto.getAge());
+        updateStaff.setAddress(dto.getAddress());
+        return save(updateStaff);
     }
 }

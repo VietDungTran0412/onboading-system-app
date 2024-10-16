@@ -14,4 +14,6 @@ public class StaffDto {
     @Max(60)
     @NotNull
     private Integer age;
+    private String address;
+
 }
