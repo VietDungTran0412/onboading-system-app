@@ -22,10 +22,6 @@ import swin.swe4006.c6g1.service.StaffService;
 import java.util.Arrays;
 import java.util.List;
 
-import static org.mockito.Mockito.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
-
 @WebMvcTest(StaffController.class)
 class StaffControllerTest {
 
