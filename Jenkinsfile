@@ -24,13 +24,15 @@ pipeline {
                     def sonarScanner = "${SCANNER_HOME}/bin/sonar-scanner"
                     catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') { 
                         sh """
-                        ${sonarScanner} \
-                        -Dsonar.host.url=${SONARQUBE_SERVER} \
-                        -Dsonar.login=${SONAR_TOKEN} \
-                        -Dsonar.projectName=onboarding-system-app \
-                        -Dsonar.java.binaries=target/classes \
-                        -Dsonar.projectKey=onboarding-system-app \
-                        -X
+                            mvn clean verify sonar:sonar \
+                              -Dsonar.host.url=${SONARQUBE_SERVER} \
+                              -Dsonar.login=${SONAR_TOKEN} \
+                              -Dsonar.projectName=onboarding-system-app \
+                              -Dsonar.java.binaries=target/classes \
+                              -Dsonar.projectKey=onboarding-system-app \
+                              -Dsonar.qualitygate.wait=true \
+                              -Dsonar.coverage.jacoco.xmlReportPaths=target/site/jacoco/jacoco.xml \
+                              -X
                         """
                     }
                 }
@@ -64,7 +66,7 @@ pipeline {
                 sh "aws s3 cp target/c6g1-0.0.1-SNAPSHOT.jar  s3://swin-c6g1-report-bucket/build/app-${BUILD_VERSION}.jar"
             }
         }
-        stage ('Pull Build File From S3 To Test Server') {
+        stage ('Pull Build File and Deploy To Test Server') {
             steps{
                 sshagent(credentials : ['application-server-ssh-key']) {
                     echo "*** Pull And Deploy to Test Server ***"
@@ -75,6 +77,14 @@ pipeline {
         stage('Integration Testing using Postman') {
             steps {
                 echo '*** Integration Testing using Postman ***'
+            }
+        }
+        stage ('Pull Build File and Deploy To Prod Servers') {
+            steps{
+                sshagent(credentials : ['application-server-ssh-key']) {
+                    echo "*** Pull And Deploy to Production Servers ***"
+                    sh "/usr/bin/ansible-playbook playbook/prod-server-deployment.yml -i playbook/prod-hosts.ini"
+                }
             }
         }
     }
