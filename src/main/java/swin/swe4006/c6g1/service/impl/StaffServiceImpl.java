@@ -25,6 +25,7 @@ public class StaffServiceImpl extends BaseServiceImpl<Staff, Long, StaffReposito
         staff.setAge(dto.getAge());
         staff.setName(dto.getName());
         staff.setAddress(dto.getAddress());
+        staff.setRole(dto.getRole());
         return staff;
     }
     @Override
@@ -58,6 +59,7 @@ public class StaffServiceImpl extends BaseServiceImpl<Staff, Long, StaffReposito
         updateStaff.setName(dto.getName());
         updateStaff.setAge(dto.getAge());
         updateStaff.setAddress(dto.getAddress());
+        updateStaff.setRole(dto.getRole());
         return save(updateStaff);
     }
 }

@@ -15,5 +15,6 @@ public class StaffDto {
     @NotNull
     private Integer age;
     private String address;
+    private String role;
 
 }
