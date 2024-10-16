@@ -24,7 +24,7 @@ public class HealthCheckController {
         // Retrieve hostname and IP address
         String hostname = localHost.getHostName();
         String ipAddress = localHost.getHostAddress();
-        HealthCheckDto res = HealthCheckDto.builder().apiVersion("v2").hostname(hostname).ipAddress(ipAddress).build();
+        HealthCheckDto res = HealthCheckDto.builder().apiVersion("v3").hostname(hostname).ipAddress(ipAddress).build();
         return ResponseRestDto.builder().data(res).message("Healthy!").build();
     }
 }

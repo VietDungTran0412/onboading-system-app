@@ -22,7 +22,7 @@ pipeline {
             steps {
                 script {
                     def sonarScanner = "${SCANNER_HOME}/bin/sonar-scanner"
-                    catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') { // Catch any failure and mark the stage as failed
+                    catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') { 
                         sh """
                         ${sonarScanner} \
                         -Dsonar.host.url=${SONARQUBE_SERVER} \
