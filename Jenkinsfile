@@ -75,6 +75,15 @@ pipeline {
         stage('Integration Testing using Postman') {
             steps {
                 echo '*** Integration Testing using Postman ***'
+                sh """
+                newman run https://swin-c6g1-report-bucket.s3.ap-southeast-2.amazonaws.com/postman-test/test-collection.postman_collection.json \
+                --reporters cli,html \
+                --reporter-html-export newman-report.html
+                """
+                // Optionally, upload the report to S3
+                sh """
+                aws s3 cp newman-report.html s3://swin-c6g1-report-bucket/reports/newman-report-${BUILD_VERSION}.html
+                """
             }
         }
     }
