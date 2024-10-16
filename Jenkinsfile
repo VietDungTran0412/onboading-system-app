@@ -94,11 +94,12 @@ pipeline {
 //        }
         stage ('Pull Build File and Deploy To Prod Servers') {
             steps{
-                sshagent(credentials : ['application-server-ssh-key']) {
-                    echo "*** Pull And Deploy to Production Servers ***"
-                    sh "ansible-galaxy collection install -r playbook/requirements.yml"
-                    sh "/usr/bin/ansible-playbook playbook/prod-server-deployment.yml -i playbook/prod-hosts.ini --private-key=$ANSIBLE_PRIVATE_KEY"
-                }
+                echo "*** Pull And Deploy to Production Servers ***"
+                sh "ansible-galaxy collection install -r playbook/requirements.yml"
+                sh "/usr/bin/ansible-playbook playbook/prod-server-deployment.yml -i playbook/prod-hosts.ini --private-key=$ANSIBLE_PRIVATE_KEY"
+//                sshagent(credentials : ['application-server-ssh-key']) {
+//
+//                }
             }
         }
     }
