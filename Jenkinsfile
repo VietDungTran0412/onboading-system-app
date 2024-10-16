@@ -77,6 +77,18 @@ pipeline {
         stage('Integration Testing using Postman') {
             steps {
                 echo '*** Integration Testing using Postman ***'
+                script {
+                    try {
+                        // Run Postman collection and display the results in the console
+                        sh """
+                        newman run https://swin-c6g1-report-bucket.s3.ap-southeast-2.amazonaws.com/postman-test/test-collection.postman_collection.json \
+                        --reporters cli
+                        """
+                    } catch (Exception e) {
+                        echo "Newman run failed: ${e.getMessage()}"
+                        error("Newman test execution failed")
+                    }
+                }
             }
         }
         stage ('Pull Build File and Deploy To Prod Servers') {
