@@ -75,15 +75,27 @@ pipeline {
         stage('Integration Testing using Postman') {
             steps {
                 echo '*** Integration Testing using Postman ***'
-                sh """
-                newman run https://swin-c6g1-report-bucket.s3.ap-southeast-2.amazonaws.com/postman-test/test-collection.postman_collection.json \
-                --reporters cli,html \
-                --reporter-html-export newman-report.html
-                """
-                // Optionally, upload the report to S3
-                sh """
-                aws s3 cp newman-report.html s3://swin-c6g1-report-bucket/reports/newman-report-${BUILD_VERSION}.html
-                """
+                script {
+                    try {
+                        // Run Postman collection and export the HTML report
+                        sh """
+                        newman run https://swin-c6g1-report-bucket.s3.ap-southeast-2.amazonaws.com/postman-test/test-collection.postman_collection.json \
+                        --reporters cli,html \
+                        --reporter-html-export newman-report.html
+                        """
+                        
+                        // List files to verify that the report is generated
+                        sh 'ls -al'
+                        
+                        // Upload the Newman report to S3
+                        sh """
+                        aws s3 cp newman-report.html s3://swin-c6g1-report-bucket/reports/newman-report-${BUILD_VERSION}.html
+                        """
+                    } catch (Exception e) {
+                        echo "Newman run failed: ${e.getMessage()}"
+                        error("Newman test execution failed")
+                    }
+                }
             }
         }
     }
