@@ -16,5 +16,4 @@ public class StaffDto {
     private Integer age;
     private String address;
     private String role;
-    private String email;
 }
