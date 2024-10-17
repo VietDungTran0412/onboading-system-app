@@ -19,10 +19,6 @@ public class Staff {
     private String address;
     @Column(name = "role")
     private String role;
-    @Column(name = "email")
-    private String email;
-    @Column(name = "phone_number")
-    private String phone;
     public Staff() {}
     public Staff(Long id, String name, Integer age) {
         this.id = id;
